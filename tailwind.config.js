@@ -6,11 +6,7 @@ export default {
   ],
   darkMode: 'class',
   theme: {
-    extend: {
-      fontFamily: {
-        sans: ['Bai Jamjuree', 'sans-serif'],
-      },
-    },
+    extend: {},
   },
   plugins: [],
 }
