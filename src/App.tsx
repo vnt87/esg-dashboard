@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import DisclosureView from './components/DisclosureView';
 import Dashboard from './components/Dashboard';
+import Profile from './pages/Profile';
 import './index.css';
 
 // Create theme context
@@ -12,7 +13,18 @@ export const ThemeContext = createContext({
   toggleDarkMode: () => {},
 });
 
+// Create sidebar context
+export const SidebarContext = createContext({
+  isCollapsed: false,
+  toggleSidebar: () => {},
+});
+
 function App() {
+  // Sidebar state
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const savedState = localStorage.getItem('sidebarCollapsed');
+    return savedState === 'true';
+  });
   // Theme state
   const [isDark, setIsDark] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -37,9 +49,15 @@ function App() {
   }, [isDark]);
 
   const toggleDarkMode = () => setIsDark(!isDark);
+  const toggleSidebar = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    localStorage.setItem('sidebarCollapsed', String(newState));
+  };
 
   return (
     <ThemeContext.Provider value={{ isDark, toggleDarkMode }}>
+      <SidebarContext.Provider value={{ isCollapsed, toggleSidebar }}>
       <Router>
         <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
         <Sidebar />
@@ -49,11 +67,13 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/disclosure/:id" element={<DisclosureView />} />
+              <Route path="/profile" element={<Profile />} />
             </Routes>
           </div>
         </div>
         </div>
       </Router>
+      </SidebarContext.Provider>
     </ThemeContext.Provider>
   );
 }
