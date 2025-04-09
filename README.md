@@ -27,18 +27,15 @@ bun --version
 bun install
 ```
 
-2. **Start the development server:**
+2. **Start the development servers:**
 ```bash
 # In the project root directory
 bun dev
-
-# In a new terminal, start the backend server
-cd server
-bun install
-bun dev
 ```
 
-The frontend will be available at http://localhost:5174 and the backend API at http://localhost:3001.
+This will start both the frontend and backend servers concurrently:
+- Frontend: http://localhost:5174
+- Backend API: http://localhost:3001
 
 ## Database Setup
 
