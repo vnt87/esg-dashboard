@@ -4,7 +4,7 @@ import axios from 'axios';
 import DataTable from '../components/DataTable';
 
 interface Disclosure {
-  disclosure_id: string;
+  disclosure_id: number;
   company: string;
   framework: string;
   disclosure_identifier: string;
@@ -12,6 +12,7 @@ interface Disclosure {
   evidence_summary: string;
   disclosure_type: string;
   status: 'Draft' | 'In Progress' | 'Completed';
+  user_id: number;
 }
 
 const PAGE_SIZE = 10;
@@ -42,7 +43,7 @@ const DisclosuresList = () => {
     fetchDisclosures();
   }, [currentPage]);
 
-  const getStatusColor = (status: Disclosure['status']) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'Completed':
         return 'bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400';
