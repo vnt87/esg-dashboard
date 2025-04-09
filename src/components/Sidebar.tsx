@@ -16,21 +16,16 @@ const Sidebar = () => {
   const navigationItems: NavItem[] = [
     { name: 'My Dashboard', icon: <House size={20} />, path: '/' },
     { name: 'Company Directory', icon: <Briefcase size={20} />, path: '/company-directory' },
-  ];
-
-  const portfolioItems: NavItem[] = [
-    { name: 'Portfolios', icon: <FileText size={20} />, path: '/portfolios' },
-    { name: 'Create Portfolio', icon: <FolderPlus size={20} />, path: '/create-portfolio' },
+    { name: 'Portfolios', icon: <FolderPlus size={20} />, path: '/portfolios' },
   ];
 
   const disclosureItems: NavItem[] = [
     { name: 'Disclosures', icon: <FileText size={20} />, path: '/disclosures' },
     { name: 'Requests', icon: <FileQuestion size={20} />, path: '/requests' },
-    { name: 'Frameworks', icon: <BookOpen size={20} />, path: '/frameworks' },
   ];
 
-  const supportItems: NavItem[] = [
-    { name: 'Knowledge', icon: <Info size={20} />, path: '/knowledge' },
+  const accountItems: NavItem[] = [
+    { name: 'Profile', icon: <Info size={20} />, path: '/profile' },
   ];
 
   const renderNavItems = (items: NavItem[], title?: string) => (
@@ -70,10 +65,9 @@ const Sidebar = () => {
         </button>
       </div>
       <div className="flex-1 overflow-auto">
-        {renderNavItems(navigationItems)}
-        {renderNavItems(portfolioItems, 'PORTFOLIOS')}
+        {renderNavItems(navigationItems, 'NAVIGATION')}
         {renderNavItems(disclosureItems, 'DISCLOSURES')}
-        {renderNavItems(supportItems, 'SUPPORT')}
+        {renderNavItems(accountItems, 'ACCOUNT')}
       </div>
     </div>
   );

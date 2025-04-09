@@ -5,8 +5,8 @@ Need help or want to join the community? Join our [Discord](https://discord.gg/s
 
 To run the devserver:
 ```
-npm install
-npm run dev
+bun install
+bun dev
 ```
 
 ## Screenshots

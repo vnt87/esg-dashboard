@@ -1,22 +1,58 @@
 import { User, Mail, Calendar, MapPin, Building, Lock, Key, ShieldCheck } from 'lucide-react';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { ThemeContext } from '../App';
+import axios from 'axios';
 
 type TabType = 'overview' | 'edit' | 'password' | 'api' | '2fa';
 
+interface UserData {
+  user_id: number;
+  name: string;
+  email: string;
+  join_date: string;
+  location: string;
+  company: string;
+  bio: string;
+  initials: string;
+}
+
 const Profile = () => {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Dummy user data (in a real app, this would come from an API/props)
-  const userData = {
-    name: 'Mike Kelvin',
-    initials: 'MK',
-    email: 'mike.kelvin@example.com',
-    joinDate: 'September 2023',
-    location: 'Ho Chi Minh City, Vietnam',
-    company: 'ESG Analytics Ltd.',
-    bio: 'ESG Data Analyst with over 5 years of experience in sustainability reporting and environmental impact assessment.',
-  };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // For now, we'll hardcode user_id as 1 since we don't have auth yet
+        const response = await axios.get('http://localhost:3001/api/profile/1');
+        const data = response.data;
+        
+        // Format the data to match our interface
+        setUserData({
+          ...data,
+          // Extract initials from name
+          initials: data.name.split(' ').map((n: string) => n[0]).join(''),
+        });
+      } catch (err) {
+        setError('Failed to load user profile');
+        console.error('Error fetching user profile:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (loading) {
+    return <div className="p-6">Loading...</div>;
+  }
+
+  if (error || !userData) {
+    return <div className="p-6 text-red-500">{error || 'Failed to load profile'}</div>;
+  }
 
   return (
     <div className="p-6">
@@ -102,7 +138,7 @@ const Profile = () => {
               
               <div className="flex items-center text-gray-600 dark:text-gray-400">
                 <Calendar size={18} className="mr-2" />
-                Joined {userData.joinDate}
+                Joined {new Date(userData.join_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </div>
               
               <div className="flex items-center text-gray-600 dark:text-gray-400">

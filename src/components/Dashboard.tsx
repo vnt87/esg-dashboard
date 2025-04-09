@@ -1,40 +1,48 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight, FileText, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
-const disclosureData = [
-  {
-    id: '1',
-    company: 'Funki A/S',
-    framework: 'SASB Toys & Sporting Goods',
-    disclosure: 'ff',
-    lastUpdated: '31/10/2022 12:12',
-    evidence: 'No Documents',
-    type: 'Corporate Disclosure',
-    status: 'In Progress',
-  },
-  {
-    id: '2',
-    company: 'Eco Solutions Inc.',
-    framework: 'GRI Environmental Standards',
-    disclosure: 'env-123',
-    lastUpdated: '28/10/2022 09:45',
-    evidence: '2 Documents',
-    type: 'Environmental Disclosure',
-    status: 'Completed',
-  },
-  {
-    id: '3',
-    company: 'Tech Innovations Ltd',
-    framework: 'SASB Technology',
-    disclosure: 'tech-456',
-    lastUpdated: '25/10/2022 14:30',
-    evidence: '1 Document',
-    type: 'Corporate Disclosure',
-    status: 'Draft',
-  },
-];
+interface Disclosure {
+  disclosure_id: string;
+  company: string;
+  framework: string;
+  disclosure_identifier: string;
+  last_updated: string;
+  evidence_summary: string;
+  disclosure_type: string;
+  status: 'Draft' | 'In Progress' | 'Completed';
+}
 
 const Dashboard = () => {
+  const [disclosures, setDisclosures] = useState<Disclosure[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchDisclosures = async () => {
+      try {
+        // For now, we'll hardcode user_id as 1 since we don't have auth yet
+        const response = await axios.get('http://localhost:3001/api/disclosures/1');
+        setDisclosures(response.data);
+      } catch (err) {
+        setError('Failed to load disclosures');
+        console.error('Error fetching disclosures:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDisclosures();
+  }, []);
+
+  if (loading) {
+    return <div className="p-6">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="p-6 text-red-500">{error}</div>;
+  }
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -60,8 +68,8 @@ const Dashboard = () => {
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {disclosureData.map((disclosure) => (
-              <tr key={disclosure.id}>
+            {disclosures.map((disclosure) => (
+              <tr key={disclosure.disclosure_id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900 dark:text-white">{disclosure.company}</div>
                 </td>
@@ -69,7 +77,9 @@ const Dashboard = () => {
                   <div className="text-sm text-gray-500 dark:text-gray-400">{disclosure.framework}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500 dark:text-gray-400">{disclosure.lastUpdated}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    {new Date(disclosure.last_updated).toLocaleString()}
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -80,7 +90,7 @@ const Dashboard = () => {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                  <Link to={`/disclosure/${disclosure.id}`} className="text-teal-600 dark:text-teal-400 hover:text-teal-900 dark:hover:text-teal-300">
+                  <Link to={`/disclosure/${disclosure.disclosure_id}`} className="text-teal-600 dark:text-teal-400 hover:text-teal-900 dark:hover:text-teal-300">
                     <div className="flex items-center">
                       <FileText size={16} className="mr-1" />
                       <span>View</span>
@@ -119,19 +129,25 @@ const Dashboard = () => {
           <h2 className="text-lg font-medium mb-4 text-gray-900 dark:text-white">Disclosure Statistics</h2>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
-              <div className="text-3xl font-bold text-teal-500">3</div>
+              <div className="text-3xl font-bold text-teal-500">{disclosures.length}</div>
               <div className="text-sm text-gray-500 dark:text-gray-400">Active Disclosures</div>
             </div>
             <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
-              <div className="text-3xl font-bold text-green-500">1</div>
+              <div className="text-3xl font-bold text-green-500">
+                {disclosures.filter(d => d.status === 'Completed').length}
+              </div>
               <div className="text-sm text-gray-500 dark:text-gray-400">Completed</div>
             </div>
             <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
-              <div className="text-3xl font-bold text-yellow-500">1</div>
+              <div className="text-3xl font-bold text-yellow-500">
+                {disclosures.filter(d => d.status === 'Draft').length}
+              </div>
               <div className="text-sm text-gray-500 dark:text-gray-400">Draft</div>
             </div>
             <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
-              <div className="text-3xl font-bold text-blue-500">1</div>
+              <div className="text-3xl font-bold text-blue-500">
+                {disclosures.filter(d => d.status === 'In Progress').length}
+              </div>
               <div className="text-sm text-gray-500 dark:text-gray-400">In Progress</div>
             </div>
           </div>

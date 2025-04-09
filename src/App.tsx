@@ -5,6 +5,10 @@ import Header from './components/Header';
 import DisclosureView from './components/DisclosureView';
 import Dashboard from './components/Dashboard';
 import Profile from './pages/Profile';
+import CompanyDirectory from './pages/CompanyDirectory';
+import Portfolios from './pages/Portfolios';
+import DisclosuresList from './pages/DisclosuresList';
+import Requests from './pages/Requests';
 import './index.css';
 
 // Create theme context
@@ -68,6 +72,10 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/disclosure/:id" element={<DisclosureView />} />
               <Route path="/profile" element={<Profile />} />
+            <Route path="/company-directory" element={<CompanyDirectory />} />
+            <Route path="/portfolios" element={<Portfolios />} />
+            <Route path="/disclosures" element={<DisclosuresList />} />
+            <Route path="/requests" element={<Requests />} />
             </Routes>
           </div>
         </div>
